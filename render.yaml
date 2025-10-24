@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: mcp-amazon-ads
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        generateValue: true
+      - key: AMAZON_ADS_CLIENT_ID
+        sync: false
