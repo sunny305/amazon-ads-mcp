@@ -64,7 +64,6 @@ export async function retryWithBackoff<T>(
         maxDelayMs
       );
 
-      console.warn(`Attempt ${attempt + 1} failed, retrying in ${delay}ms...`);
       await sleep(delay);
     }
   }
@@ -107,7 +106,6 @@ export async function retryRateLimit<T>(
         ? parseInt(retryAfter) * 1000
         : 1000 * Math.pow(2, attempt);
 
-      console.warn(`Rate limit hit, retrying in ${delay}ms...`);
       await sleep(delay);
     }
   }
