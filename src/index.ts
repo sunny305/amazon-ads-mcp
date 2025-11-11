@@ -7,7 +7,7 @@ import {
   ListToolsRequestSchema,
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
-import { createAmazonAdsClientFromRequest } from './client.js';
+import { createAmazonAdsClientFromRequest, UserCredentialsInput } from './client.js';
 import { handleGetProfiles } from './tools/get_profiles.js';
 import { handleGetCampaigns } from './tools/get_campaigns.js';
 import { handleGetAdGroups } from './tools/get_ad_groups.js';
@@ -111,7 +111,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       throw new McpError(ErrorCode.InvalidParams, 'Missing arguments');
     }
 
-    const client = createAmazonAdsClientFromRequest(args.user_credentials);
+    // Create client asynchronously (supports session-based token retrieval)
+    const client = await createAmazonAdsClientFromRequest(args.user_credentials as UserCredentialsInput);
 
     let result;
 

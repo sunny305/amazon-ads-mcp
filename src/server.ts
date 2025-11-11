@@ -289,8 +289,30 @@ app.post('/mcp', async (req, res) => {
       const { name, arguments: args } = params;
 
       try {
-        // Create Amazon Ads client from user credentials
-        const client = createAmazonAdsClientFromRequest(args.user_credentials);
+        // Extract credentials from args
+        const userCredentials = args.user_credentials || {};
+        const sessionToken = userCredentials.sessionToken;
+        const legacyAccessToken = userCredentials.access_token;
+        const clientId = userCredentials.client_id;
+
+        // Validate that either sessionToken OR legacy credentials are provided
+        if (!sessionToken && !legacyAccessToken) {
+          throw new Error('Missing credentials: provide either sessionToken or access_token in user_credentials');
+        }
+
+        if (!sessionToken && !clientId) {
+          throw new Error('Missing client_id in user_credentials (required for legacy mode)');
+        }
+
+        // Log which mode we're using
+        if (sessionToken) {
+          logger.info(`Tool ${name}: Using session-based token retrieval`);
+        } else {
+          logger.info(`Tool ${name}: Using legacy direct token mode (deprecated)`);
+        }
+
+        // Create Amazon Ads client from user credentials (async)
+        const client = await createAmazonAdsClientFromRequest(userCredentials);
 
         let result;
 

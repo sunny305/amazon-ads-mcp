@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import { retrievePlatformTokens } from './utils/tokenRetrieval.js';
 
 /**
  * Amazon Ads API credentials interface
@@ -7,6 +8,16 @@ export interface AmazonAdsCredentials {
   access_token: string;
   client_id: string;
   profile_id?: string; // Optional at client level, required for most operations
+}
+
+/**
+ * User credentials interface for session-based or legacy token retrieval
+ */
+export interface UserCredentialsInput {
+  sessionToken?: string;
+  access_token?: string;
+  client_id?: string;
+  profile_id?: string;
 }
 
 /**
@@ -128,22 +139,53 @@ export class AmazonAdsClient {
 
 /**
  * Create Amazon Ads client from user credentials
- * Validates required fields and returns initialized client
- * @param userCredentials - User credentials object
+ * Supports both session-based token retrieval and legacy direct token passing
+ * @param userCredentials - User credentials object (sessionToken or access_token)
  * @returns Initialized AmazonAdsClient
  * @throws Error if required credentials are missing
  */
-export function createAmazonAdsClientFromRequest(userCredentials: any): AmazonAdsClient {
-  if (!userCredentials || !userCredentials.access_token) {
-    throw new Error('Missing access_token in user_credentials');
+export async function createAmazonAdsClientFromRequest(userCredentials: UserCredentialsInput): Promise<AmazonAdsClient> {
+  if (!userCredentials) {
+    throw new Error('Missing user_credentials');
   }
-  if (!userCredentials.client_id) {
-    throw new Error('Missing client_id in user_credentials');
+
+  let access_token: string;
+  let client_id: string;
+  let profile_id: string | undefined;
+
+  // Session-based token retrieval (preferred)
+  if (userCredentials.sessionToken) {
+    console.log('[AmazonAdsClient] Using session-based token retrieval');
+
+    const tokens = await retrievePlatformTokens(userCredentials, 'amazon_ads');
+
+    access_token = tokens.access_token;
+    client_id = tokens.client_id || userCredentials.client_id || '';
+    profile_id = tokens.profile_id || userCredentials.profile_id;
+
+    if (!client_id) {
+      throw new Error('Missing client_id in tokens or user_credentials');
+    }
+  }
+  // Legacy direct token passing
+  else {
+    console.log('[AmazonAdsClient] Using legacy direct token mode (deprecated)');
+
+    if (!userCredentials.access_token) {
+      throw new Error('Missing access_token in user_credentials');
+    }
+    if (!userCredentials.client_id) {
+      throw new Error('Missing client_id in user_credentials');
+    }
+
+    access_token = userCredentials.access_token;
+    client_id = userCredentials.client_id;
+    profile_id = userCredentials.profile_id;
   }
 
   return new AmazonAdsClient({
-    access_token: userCredentials.access_token,
-    client_id: userCredentials.client_id,
-    profile_id: userCredentials.profile_id
+    access_token,
+    client_id,
+    profile_id
   });
 }
