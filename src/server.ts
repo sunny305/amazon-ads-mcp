@@ -63,10 +63,42 @@ app.get('/', (req, res) => {
  * MCP JSON-RPC endpoint
  */
 app.post('/mcp', async (req, res) => {
+  // Set response timeout
+  res.setTimeout(25000, () => {
+    logger.error('Response timeout');
+    if (!res.headersSent) {
+      res.status(504).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32000,
+          message: 'Gateway timeout',
+        },
+        id: null,
+      });
+    }
+  });
+
   try {
     const { jsonrpc, method, params, id } = req.body;
 
     logger.debug(`Received MCP request: ${method}`);
+
+    // Validate request
+    if (!method) {
+      res.status(400).json({
+        jsonrpc: '2.0',
+        error: { code: -32600, message: 'Invalid Request' },
+        id: id || null,
+      });
+      return;
+    }
+
+    // Handle notifications (no response needed)
+    if (method?.startsWith('notifications/')) {
+      logger.info('Notification received', { method });
+      res.status(200).end();
+      return;
+    }
 
     // Handle initialize method
     if (method === 'initialize') {
