@@ -134,10 +134,10 @@ app.post('/mcp', async (req, res) => {
                   user_credentials: {
                     type: 'object',
                     properties: {
+                      sessionToken: { type: 'string' },
                       access_token: { type: 'string' },
                       client_id: { type: 'string' }
-                    },
-                    required: ['access_token', 'client_id']
+                    }
                   }
                 },
                 required: ['user_credentials']
@@ -152,11 +152,11 @@ app.post('/mcp', async (req, res) => {
                   user_credentials: {
                     type: 'object',
                     properties: {
+                      sessionToken: { type: 'string' },
                       access_token: { type: 'string' },
                       client_id: { type: 'string' },
                       profile_id: { type: 'string' }
-                    },
-                    required: ['access_token', 'client_id', 'profile_id']
+                    }
                   },
                   campaign_type: { type: 'string', enum: ['sp', 'sb', 'sd'], default: 'sp' },
                   filters: { type: 'object' },
@@ -174,11 +174,11 @@ app.post('/mcp', async (req, res) => {
                   user_credentials: {
                     type: 'object',
                     properties: {
+                      sessionToken: { type: 'string' },
                       access_token: { type: 'string' },
                       client_id: { type: 'string' },
                       profile_id: { type: 'string' }
-                    },
-                    required: ['access_token', 'client_id', 'profile_id']
+                    }
                   },
                   campaign_type: { type: 'string' },
                   filters: { type: 'object' },
@@ -196,11 +196,11 @@ app.post('/mcp', async (req, res) => {
                   user_credentials: {
                     type: 'object',
                     properties: {
+                      sessionToken: { type: 'string' },
                       access_token: { type: 'string' },
                       client_id: { type: 'string' },
                       profile_id: { type: 'string' }
-                    },
-                    required: ['access_token', 'client_id', 'profile_id']
+                    }
                   },
                   filters: { type: 'object' },
                   paging: { type: 'object' }
@@ -217,11 +217,11 @@ app.post('/mcp', async (req, res) => {
                   user_credentials: {
                     type: 'object',
                     properties: {
+                      sessionToken: { type: 'string' },
                       access_token: { type: 'string' },
                       client_id: { type: 'string' },
                       profile_id: { type: 'string' }
-                    },
-                    required: ['access_token', 'client_id', 'profile_id']
+                    }
                   },
                   filters: { type: 'object' },
                   paging: { type: 'object' }
@@ -238,11 +238,11 @@ app.post('/mcp', async (req, res) => {
                   user_credentials: {
                     type: 'object',
                     properties: {
+                      sessionToken: { type: 'string' },
                       access_token: { type: 'string' },
                       client_id: { type: 'string' },
                       profile_id: { type: 'string' }
-                    },
-                    required: ['access_token', 'client_id', 'profile_id']
+                    }
                   },
                   report_type: { type: 'string' },
                   campaign_type: { type: 'string' },
@@ -270,10 +270,10 @@ app.post('/mcp', async (req, res) => {
                   user_credentials: {
                     type: 'object',
                     properties: {
+                      sessionToken: { type: 'string' },
                       access_token: { type: 'string' },
                       client_id: { type: 'string' }
-                    },
-                    required: ['access_token', 'client_id']
+                    }
                   }
                 },
                 required: ['user_credentials']
